@@ -23,17 +23,16 @@ requestURL = baseURLstart + targetPage + baseURLend
 
 print(requestURL)
 
-requestReponse = requests.get(requestURL)
-print(requestReponse.status_code)
-#print requestReponse.text
+requestResponse = requests.get(requestURL)
+print(requestResponse.status_code)
+#print requestResponse.text
 
-responseBody = requestReponse.text
+responseBody = requestResponse.text
 
-linkIter = re.finditer(linkRegex, responseBody)
-matchList = list(linkIter)
-matches = [matchItem.group(1) for matchItem in matchList]
+linkIter = re.finditer(linkRegex, requestResponse.text)
+regexList = list(linkIter)
+linksFromPage = [regexMatch.group(1) for regexMatch in regexList]
 #print(len(matches))
-
 
 
 
@@ -44,37 +43,37 @@ def findLinks( title ):
     requestURL = baseURLstart + title + baseURLend
     #print requestURL
     requestReponse = requests.get(requestURL)
-    print (requestReponse.status_code)
-    if requestReponse.status_code == 200 :
-        linkIter = re.finditer(linkRegex, requestReponse.text)
-        matchList = list(linkIter)
-        matches = [matchItem.group(1) for matchItem in matchList]
-        return matches
+    print (requestResponse.status_code)
+    if requestResponse.status_code == 200 :
+        linkIter = re.finditer(linkRegex, requestResponse.text)
+        RegexList = list(linkIter)
+        linksFromPage = [regexMatch.group(1) for regexMatch in regexList]
+        return linksFromPage
     else:
         print ("REST API error")
         return []
 
-allMatches = []
-for match in matches:
-    if match == destinationPage:
+allLinks = []
+for link in linksFromPage:
+    if link == destinationPage:
         print ("I found it!")
         break
-    print(match)
-    allMatches.extend(findLinks(match))
+    print(link)
+    linksFromPage.extend(findLinks(link))
 found = False
-print(len(allMatches))
-allMatches = set(allMatches)
-print(len(allMatches))
+print(len(linksFromPage))
+linksFromPage = set(linksFromPage)
+print(len(linksFromPage))
 while not found:
-    matches = allMatches
-    allMatches = []
-    for match in matches:
+    searchSpace = linksFromPage
+    linksFromPage = []
+    for link in SearchSpace:
         if match == destinationPage:
             print ("I found it!")
             found = True
             break
-        print(match)
-        allMatches.extend(findLinks(match))
-    print(len(allMatches))
-    allMatches = set(allMatches)
-    print(len(allMatches))
+        print(link)
+        linksFromPage.extend(findLinks(link))
+    print(len(linksFromPage))
+    linksFromPage = set(linksFromPage)
+    print(len(linksFromPage))
